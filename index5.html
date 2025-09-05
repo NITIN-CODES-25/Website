@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teacher Dashboard - Smart Curriculum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #000000;
+        }
+        .btn-primary {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #333333;
+        }
+        .card {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+        }
+        .educational-icon {
+            color: #000000;
+        }
+        /* Modal styles */
+        #lecture-modal {
+            background-color: rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 max-w-4xl">
+        <header class="text-center py-6">
+            <h1 class="text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+                <i class="fas fa-graduation-cap educational-icon"></i> Teacher Dashboard
+            </h1>
+            <p class="text-gray-700">Manage attendance, timetable, and reports efficiently</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Automated Attendance -->
+            <div class="card p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <i class="fas fa-qrcode educational-icon"></i> Automated Attendance
+                </h3>
+                <p class="text-gray-700 mb-4">Select lecture to mark attendance.</p>
+
+                <!-- Select Lecture Button -->
+                <button id="select-lecture-btn" class="btn-primary px-4 py-2 rounded w-full mb-4">
+                    Select Lecture</a>
+                </button>
+
+                <!-- Lecture Selection Modal with Date Picker -->
+                <div id="lecture-modal" class="fixed inset-0 flex items-center justify-center hidden z-50">
+                    <div class="bg-white rounded p-6 max-w-md w-full shadow-lg">
+                        <h4 class="text-xl font-semibold mb-4 text-black">Select Lecture Date</h4>
+                        <input 
+                            type="date" 
+                            id="lecture-date-picker" 
+                            class="border border-gray-300 rounded p-2 w-full mb-4 text-black"
+                        />
+                        <div class="flex justify-end gap-2">
+                            <button id="confirm-date-btn" class="btn-primary px-4 py-2 rounded"><a href="index6.html">Confirm</a></button>
+                            <button id="close-modal-btn" class="btn-primary bg-gray-700 hover:bg-gray-800 px-4 py-2 rounded">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-black">
+                    <p class="text-sm">Selected Lecture: <span id="selected-lecture">None</span></p>
+                    <p class="text-sm">Real-time Dashboard: <span id="attendance-count">0</span> students marked</p>
+                </div>
+            </div>
+
+            <!-- Timetable & Routine Planner -->
+            <div class="card p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt educational-icon"></i> Timetable & Planner
+                </h3>
+                <p class="text-gray-700 mb-4">Auto-sync timetable with schedule and free slots display.</p>
+                <div class="text-sm">
+                    <p>Today's Schedule:</p>
+                    <ul class="list-disc list-inside">
+                        <li>9:00 AM - Math Class</li>
+                        <li>11:00 AM - Free Slot</li>
+                        <li>2:00 PM - Science Activity</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Reports & Insights -->
+            <div class="card p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <i class="fas fa-chart-bar educational-icon"></i> Reports & Insights
+                </h3>
+                <p class="text-gray-700 mb-4">Instant reports and analytics for class performance.</p>
+                <button id="view-reports-btn" class="btn-primary px-4 py-2 rounded w-full">View Reports</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample lectures data (today and past 3 days)
+        const lectures = [
+            { id: 1, title: "Math Class", date: new Date(new Date().setDate(new Date().getDate() - 3)) },
+            { id: 2, title: "Science Activity", date: new Date(new Date().setDate(new Date().getDate() - 2)) },
+            { id: 3, title: "History Lecture", date: new Date(new Date().setDate(new Date().getDate() - 1)) },
+            { id: 4, title: "Today's Lecture", date: new Date() },
+            { id: 5, title: "Upcoming Lecture", date: new Date(new Date().setDate(new Date().getDate() + 1)) } // future lecture locked
+        ];
+
+        const selectLectureBtn = document.getElementById('select-lecture-btn');
+        const lectureModal = document.getElementById('lecture-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const selectedLectureSpan = document.getElementById('selected-lecture');
+        const attendanceCountSpan = document.getElementById('attendance-count');
+        const lectureDatePicker = document.getElementById('lecture-date-picker');
+        const confirmDateBtn = document.getElementById('confirm-date-btn');
+
+        let selectedLecture = null;
+        let attendanceCount = 0;
+
+        // Format date as readable string
+        function formatDate(date) {
+            return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // Format date as yyyy-mm-dd for input[type=date]
+        function formatInputDate(date) {
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${date.getFullYear()}-${mm}-${dd}`;
+        }
+
+        // Open modal and setup date picker limits
+        selectLectureBtn.addEventListener('click', () => {
+            const today = new Date();
+            const year = today.getFullYear();
+            const minDate = new Date(year, 3, 1); // April 1st (month is 0-based)
+
+            lectureDatePicker.min = formatInputDate(minDate);
+            lectureDatePicker.max = formatInputDate(today);
+            lectureDatePicker.value = formatInputDate(today);
+
+            confirmDateBtn.disabled = false;
+            lectureModal.classList.remove('hidden');
+        });
+
+        // Confirm selected date and update lecture
+        confirmDateBtn.addEventListener('click', () => {
+            const selectedDateStr = lectureDatePicker.value;
+            if (!selectedDateStr) return;
+
+            const selectedDate = new Date(selectedDateStr);
+            selectedDate.setHours(0,0,0,0);
+
+            // Find lecture on selected date
+            const lecture = lectures.find(l => {
+                const lectureDate = new Date(l.date);
+                lectureDate.setHours(0,0,0,0);
+                return lectureDate.getTime() === selectedDate.getTime();
+            });
+
+            if (lecture) {
+                selectedLecture = lecture;
+                selectedLectureSpan.textContent = `${lecture.title} (${formatDate(lecture.date)})`;
+                attendanceCount = 0;
+                attendanceCountSpan.textContent = attendanceCount;
+                lectureModal.classList.add('hidden');
+            } else {
+                alert('No lecture scheduled on this date.');
+            }
+        });
+
+        // Close modal on cancel
+        closeModalBtn.addEventListener('click', () => {
+            lectureModal.classList.add('hidden');
+        });
+
+        // Reports button alert
+        document.getElementById('view-reports-btn').addEventListener('click', () => {
+            alert('Opening reports... Feature coming soon!');
+        });
+    </script>
+</body>
+</html>
