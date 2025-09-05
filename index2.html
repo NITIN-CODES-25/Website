@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Dashboard - Smart Curriculum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #000000;
+        }
+        .btn-primary {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #333333;
+        }
+        .card {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+        }
+        .educational-icon {
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 max-w-4xl">
+        <header class="text-center py-6">
+            <h1 class="text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+                <i class="fas fa-user-graduate educational-icon"></i> Student Dashboard
+            </h1>
+            <p class="text-gray-700">Personalized learning and attendance at your fingertips</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Integrated Timetable & Routine Planner -->
+            <div class="card p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt educational-icon"></i> My Timetable
+                </h3>
+                <p class="text-gray-700 mb-4">Auto-synced daily schedule with free slots highlighted.</p>
+                <div class="text-sm">
+                    <p>Today's Schedule:</p>
+                    <ul class="list-disc list-inside">
+                        <li>9:00 AM - Math Class</li>
+                        <li>11:00 AM - Free Slot</li>
+                        <li>2:00 PM - Science Activity</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Personalized Free-Period Activities -->
+            <div class="card p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <i class="fas fa-brain educational-icon"></i> Free Activities
+                </h3>
+                <p class="text-gray-700 mb-4">Quizzes, coding challenges, and e-learning tailored to your goals and strengths.</p>
+                <button class="btn-primary px-4 py-2 rounded w-full mb-2" onclick="alert('Starting Quiz... Feature coming soon!')">Start Quiz</button>
+                <button class="btn-primary px-4 py-2 rounded w-full mb-2" onclick="alert('Starting Coding Challenge... Feature coming soon!')">Coding Challenge</button>
+                <button class="btn-primary px-4 py-2 rounded w-full" onclick="alert('Opening E-learning Modules... Feature coming soon!')">E-learning</button>
+            </div>
+
+            <!-- Attendance & Reports -->
+            <div class="card p-4 rounded">
+                <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <i class="fas fa-user-check educational-icon"></i> Attendance & Reports
+                </h3>
+                <p class="text-gray-700 mb-4">View your attendance percentage and recent status.</p>
+                <div class="text-sm">
+                    <p>Present: <span class="font-semibold">85%</span></p>
+                    <p>Recent: Marked as present</p>
+                </div>
+                <button class="btn-primary px-4 py-2 rounded w-full mt-4" onclick="alert('Viewing detailed reports... Feature coming soon!')">View Reports</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
